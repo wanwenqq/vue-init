@@ -4,7 +4,7 @@ import store from '../store'
 
 // 环境的切换
 if (process.env.NODE_ENV === 'development') {
-  axios.defaults.baseURL = 'http://127.0.0.1:5000/cms/login'
+  axios.defaults.baseURL = 'http://127.0.0.1:5000/v1/login'
 } else if (process.env.NODE_ENV === 'production') {
   axios.defaults.baseURL = 'http://prod.xxx.com'
 }

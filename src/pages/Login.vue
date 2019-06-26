@@ -1,38 +1,151 @@
 <template>
-    <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" @select="handleSelect"
-        background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-        <el-menu-item index="1">处理中心</el-menu-item>
-        <el-submenu index="2">
-            <template slot="title">我的工作台</template>
-            <el-menu-item index="2-1">选项1</el-menu-item>
-            <el-menu-item index="2-2">选项2</el-menu-item>
-            <el-menu-item index="2-3">选项3</el-menu-item>
-            <el-submenu index="2-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="2-4-1">选项1</el-menu-item>
-                <el-menu-item index="2-4-2">选项2</el-menu-item>
-                <el-menu-item index="2-4-3">选项3</el-menu-item>
-            </el-submenu>
-        </el-submenu>
-        <el-menu-item index="3" disabled>消息中心</el-menu-item>
-        <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
-    </el-menu>
+    <div class="login-wrap">
+        <div class="ms-login">
+            <div class="ms-title">后台管理系统</div>
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px" class="ms-content">
+                <el-form-item prop="phone">
+                    <el-input v-model="ruleForm.phone" placeholder="phone">
+                        <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input type="password" placeholder="password" v-model="ruleForm.password"
+                        @keyup.enter.native="submitForm('ruleForm')">
+                        <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
+                    </el-input>
+                </el-form-item>
+                <div class="login-btn">
+                    <el-button type="primary" @click="submitForm(ruleForm)">登录</el-button>
+                </div>
+                <p class="login-tips">Tips : 用户名和密码需要自己修改。</p>
+            </el-form>
+        </div>
+    </div>
 </template>
+
 <script>
     export default {
         data() {
-            return{
-                activeIndex2: '1'
+            var validatePass = (rule, value, callback) => {
+                if (value === "") {
+                    callback(new Error("请输入密码"));
+                } else {
+                    callback();
+                }
+            };
+            var validatePhone = (rule, value, callback) => {
+                const reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+                if (value !== "") {
+                    if (value === "") {
+                        callback(new Error("请输入手机号"));
+                    } else if (value.length == 11 && reg.test(value)) {
+                        callback();
+                    } else {
+                        callback(new Error("请输入正确的手机号"));
+                    }
+                } else {
+                    callback(new Error("请输入手机号"));
+                }
+            };
+            return {
+                ruleForm: {
+                    phone: '18602736775',
+                    password: '123456'
+                },
+                rules: {
+                    password: [{
+                        validator: validatePass,
+                        trigger: "blur"
+                    }],
+                    phone: [{
+                        validator: validatePhone,
+                        trigger: "blur"
+                    }]
+                }
+            };
+        },
+        methods: {
+            submitForm(ruleForm) {
+                this.$refs.ruleForm.validate((valid) => {
+                    if (valid) {
+                        var loginParams = {
+                            phone: ruleForm.phone,
+                            password: ruleForm.password
+                        };
+
+                        this.$api.fetchPost('/v1/login', loginParams).then((respone) => {
+                            if (respone.data.status == 200) {
+                                var token = respone.data.data.token;
+                                console.log(token);
+
+                                localStorage.setItem('token', token);
+                                this.$router.push({
+                                    path: '/home'
+                                });
+                            } else {
+                                alert(respone.data.message);
+                            }
+
+                        }).catch(err => {
+                            console.log(err);
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
             }
         }
-    };
-    methods:{
-        // handleSelect(key, keyPath) {
-        //     console.log(key, keyPath);
-        // }
     }
 </script>
 
-<style>
 
+<style lang="less" scoped>
+    .login-wrap {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-image: url(../assets/back.jpg);
+        background-size: 100%;
+    }
+
+    .ms-title {
+        width: 100%;
+        line-height: 50px;
+        text-align: center;
+        font-size: 20px;
+        color: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .ms-login {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 350px;
+        margin: -190px 0 0 -175px;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+    }
+
+    .ms-content {
+        padding: 30px 30px;
+    }
+
+    .login-btn {
+        text-align: center;
+    }
+
+    .login-btn button {
+        width: 100%;
+        height: 36px;
+        margin-bottom: 10px;
+    }
+
+    .login-tips {
+        font-size: 12px;
+        line-height: 30px;
+        color: #fff;
+    }
 </style>
