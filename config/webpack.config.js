@@ -71,8 +71,9 @@ module.exports = {
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader', // 解析 @import这种语法的
-                    'postcss-loader',
-                    'less-loader' // 把less转变为css
+                    // 'postcss-loader',
+                    'style-loader',
+                    // 'less-loader' // 把less转变为css
                 ]
             },
             {

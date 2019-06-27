@@ -100,12 +100,12 @@
 </script>
 
 
-<style lang="less" scoped>
+<style scoped>
     .login-wrap {
         position: relative;
         width: 100%;
         height: 100%;
-        background-image: url(../assets/back.jpg);
+        background-image: url(../../assets/back.jpg);
         background-size: 100%;
     }
 

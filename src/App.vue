@@ -14,7 +14,7 @@
   }
 </script>
 
-<style lang="less">
+<style>
   @import "./assets/main.css";
   @import "./assets/color-dark.css";
   /*深色主题*/
