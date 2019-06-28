@@ -3,17 +3,17 @@ const HtmlWebpackPlugin = require('html-webpack-plugin') //html分离
 const MiniCssExtractPlugin = require('mini-css-extract-plugin') //这个插件的主要作用是实现css分离
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin') // 对单独抽离出来的css文件进行压缩。
 const VueLoaderPlugin = require('vue-loader/lib/plugin'); //VueLoaderPlugin,注意路径一定是('vue-loader/lib/plugin')，而不是('vue-loader')，不然会报错
-
+const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin'); //优化打包速度
 
 module.exports = {
     devServer: { // 开发服务器的配置
         port: 3000,
         progress: true, // 编译的进度条
-        contentBase: path.join(__dirname, 'assets'), // 以assets目录为默认启动目录
+        contentBase: path.join(__dirname, 'dist'), // 以assets目录为默认启动目录
         compress: true, // 自动压缩
         open: true, // 自动打开浏览器
     },
-    mode: 'production', // 默认有两种模式：生产环境production，开发环境development
+    mode: 'development', // 默认有两种模式：生产环境production，开发环境development
     entry: './src/main.js', // 入口文件，也就是打包这个js文件
     output: { // 打包的文件位置
         filename: 'bundle.[hash:8].js', //当js文件更改， [hash]的值会变化，每次build会生成一个新的js文件，[hash:8]，只显示8位的hash值，打包出来当然文件名叫 bundle.js
@@ -41,7 +41,18 @@ module.exports = {
             },
             canPrint: true //是否将插件信息打印到控制台
         }),
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+        new ParallelUglifyPlugin({
+            cacheDir: '.cache/',
+            uglifyJS:{
+              output: {
+                comments: false
+              },
+              compress: {
+                warnings: false
+              }
+            }
+          }),
     ],
     module: { // 模块loader 默认是从右到左，从下到上执行,多个loader需要一个数组，loader是有顺序的，默认是从右向左执行，loader还可以写成 对象方式
         rules: [{
@@ -99,7 +110,7 @@ module.exports = {
             },
             {
                 test: /\.vue$/,
-                loader: 'vue-loader'
+                loader: 'vue-loader',
             },
             {
                 test: /\.(eot|svg|ttf|woff|woff2)$/,
@@ -109,5 +120,6 @@ module.exports = {
     },
     performance: {
         hints: false //取消警告提示
-    }
+    },
+    
 }
