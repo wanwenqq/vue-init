@@ -76,7 +76,8 @@
                         </el-table-column>
                         <el-table-column>
                             <template slot-scope="scope">
-                                <div class="todo-item" :class="{'todo-item-del': scope.row.status}">{{scope.row.title}}</div>
+                                <div class="todo-item" :class="{'todo-item-del': scope.row.status}">{{scope.row.title}}
+                                </div>
                             </template>
                         </el-table-column>
                         <el-table-column width="60">
@@ -90,22 +91,24 @@
             </el-col>
         </el-row>
         <el-row :gutter="20">
-            <el-col :span="12">
-                <el-card shadow="hover">
-                    <schart ref="bar" class="schart" canvasId="bar" :data="data" type="bar" :options="options"></schart>
+            <el-col :lg="12" :sm="12" :xs="24">
+                <el-card shadow='hover'>
+                    <div id="charts" ref="charts"></div>
                 </el-card>
+
             </el-col>
-            <el-col :span="12">
+            <!-- <el-col :span="12">
                 <el-card shadow="hover">
                     <schart ref="line" class="schart" canvasId="line" :data="data" type="line" :options="options2"></schart>
                 </el-card>
-            </el-col>
+            </el-col> -->
         </el-row>
     </div>
 </template>
 
 <script>
-    import Schart from 'vue-schart';
+    //引入echarts 插件
+    import echarts from "echarts";
     import bus from '../../common/bus';
     export default {
         name: 'dashboard',
@@ -183,50 +186,89 @@
                 }
             }
         },
-        components: {
-            Schart
+        mounted() {
+            this.drawChart();
+            this.init();
         },
         computed: {
             role() {
                 return this.name === 'admin' ? '超级管理员' : '普通用户';
             }
         },
-        created(){
-            this.handleListener();
-            this.changeDate();
-        },
-        activated(){
-            this.handleListener();
-        },
-        deactivated(){
-            window.removeEventListener('resize', this.renderChart);
-            bus.$off('collapse', this.handleBus);
-        },
         methods: {
-            changeDate(){
+            created() {
+                this.handleListener();
+                this.changeDate();
+            },
+            activated() {
+                this.handleListener();
+            },
+            deactivated() {
+                bus.$off('collapse', this.handleBus);
+            },
+            changeDate() {
                 const now = new Date().getTime();
                 this.data.forEach((item, index) => {
                     const date = new Date(now - (6 - index) * 86400000);
                     item.name = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
                 })
             },
-            handleListener(){
+            handleListener() {
                 bus.$on('collapse', this.handleBus);
-                // 调用renderChart方法对图表进行重新渲染
-                window.addEventListener('resize', this.renderChart)
             },
-            handleBus(msg){
-                setTimeout(() => {
-                    this.renderChart()
-                }, 300);
-            },
-            renderChart(){
-                this.$refs.bar.renderChart();
-                this.$refs.line.renderChart();
-            }
-        }
-    }
 
+            drawChart() {
+                let myChart = echarts.init(this.$refs.charts);
+                let option = {
+                    title: {
+                        text: "一周访问量",
+                        x: "center",
+                        textStyle: {
+                            fontSize: 16
+                        }
+                    },
+                    legend: {
+                        data: ["访问量"]
+                    },
+                    tooltip: {
+                        trigger: "axis",
+                        formatter: "{b}<br>访问量{c}"
+                    },
+                    xAxis: {
+                        type: "category",
+                        data: ["04-02", "04-03", "04-03", "04-04", "04-05", "04-06", "04-07"]
+                    },
+                    yAxis: {
+                        type: "value"
+                    },
+                    series: [{
+                        data: [820, 932, 901, 934, 1290, 1330, 1320],
+                        itemStyle: {
+                            normal: {
+                                //折点颜色
+                                color: "#bdb7ff",
+                                //折线颜色
+                                lineStyle: {
+                                    color: "#bdb7ff"
+                                }
+                            }
+                        },
+                        type: "line"
+                    }]
+                };
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            },
+            init() {
+                //图表自适应
+                window.onresize = () => {
+                    if (this.$refs.charts) {
+                        echarts.init(this.$refs.charts).resize();
+                    }
+                };
+            }
+        },
+    }
 </script>
 
 
@@ -335,9 +377,13 @@
         color: #999;
     }
 
-    .schart {
-        width: 100%;
+    #charts {
         height: 300px;
+        background: white;
+        margin-top: 20px;
+        padding-top: 20px;
+        -webkit-box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
+        box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
+        border-color: rgba(0, 0, 0, 0.05);
     }
-
 </style>

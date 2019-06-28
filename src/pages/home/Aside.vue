@@ -89,8 +89,8 @@
                     },
                     {
                         icon: 'el-icon-pie-chart',
-                        index: 'charts',
-                        title: 'schart图表'
+                        index: 'chart',
+                        title: '百度echart'
                     },
                     {
                         icon: 'el-icon-rank',

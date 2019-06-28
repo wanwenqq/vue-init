@@ -3,7 +3,8 @@ import Router from 'vue-router'
 import store from './store'
 
 Vue.use(Router)
-export const ROUTES = [{
+export const ROUTES = [
+  {
     path: '/',
     redirect: '/dashboard'
   },
@@ -13,7 +14,8 @@ export const ROUTES = [{
     meta: {
       title: '自述文件'
     },
-    children: [{
+    children: [
+      {
         path: '/dashboard',
         component: () => import('./pages/index/Dashboard.vue'),
         meta: {
@@ -25,6 +27,20 @@ export const ROUTES = [{
         component: () => import('./pages/tables/BaseTable.vue'),
         meta: {
           title: '基础表格'
+        }
+      },
+      {
+        path: '/tabs',
+        component: () => import('./pages/tabs/Tabs.vue'),
+        meta: {
+          title: 'tab选项卡'
+        }
+      },
+      {
+        path: '/chart',
+        component: () => import('./pages/charts/Chart.vue'),
+        meta: {
+          title: '百度echart'
         }
       }
     ]
