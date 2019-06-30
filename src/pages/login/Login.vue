@@ -72,15 +72,13 @@
                             phone: ruleForm.phone,
                             password: ruleForm.password
                         };
-
                         this.$api.fetchPost('/v1/login', loginParams).then((respone) => {
                             if (respone.data.status == 200) {
                                 var token = respone.data.data.token;
-                                console.log(token);
-
                                 localStorage.setItem('token', token);
+                                localStorage.setItem('phone', respone.data.data.phone);
                                 this.$router.push({
-                                    path: '/home'
+                                    path: '/dashboard'
                                 });
                             } else {
                                 alert(respone.data.message);
@@ -88,10 +86,10 @@
 
                         }).catch(err => {
                             console.log(err);
+                            alert('网络错误,原因:'+err);
                         })
                     } else {
-                        console.log('error submit!!');
-                        return false;
+                        alert('提交参数错误');
                     }
                 });
             }
@@ -105,7 +103,7 @@
         position: relative;
         width: 100%;
         height: 100%;
-        background-image: url(../../assets/back.jpg);
+        background-image: url(../../assets/img/back.jpg);
         background-size: 100%;
     }
 

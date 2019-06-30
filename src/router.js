@@ -42,6 +42,13 @@ export const ROUTES = [
         meta: {
           title: '百度echart'
         }
+      },
+      {
+        path: '/404',
+        component: () => import('./pages/error/404.vue'),
+        meta: {
+          title: '404错误'
+        }
       }
     ]
   },
@@ -63,7 +70,10 @@ const router = new Router({
 // 使用钩子函数对路由进行权限判断
 router.beforeEach((to, from, next) => {
   // to and from are both route objects. must call `next`.
-  const token = localStorage.getItem('token')
+  // const token = localStorage.getItem('token')
+  // localStorage.removeItem('phone');
+  console.log('999999999999999999');
+  const token = localStorage.getItem('phone')
   if (!token && to.path !== '/login') {
     next('/login')
   } else {
