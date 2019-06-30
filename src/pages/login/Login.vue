@@ -24,6 +24,7 @@
 </template>
 
 <script>
+    import {login} from '../../api/api'
     export default {
         data() {
             var validatePass = (rule, value, callback) => {
@@ -72,7 +73,7 @@
                             phone: ruleForm.phone,
                             password: ruleForm.password
                         };
-                        this.$api.fetchPost('/v1/login', loginParams).then((respone) => {
+                        login(loginParams).then((respone) => {
                             if (respone.data.status == 200) {
                                 var token = respone.data.data.token;
                                 localStorage.setItem('token', token);

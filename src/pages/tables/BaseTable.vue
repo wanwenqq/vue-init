@@ -72,6 +72,7 @@
 </template>
 
 <script>
+    import {getData} from '../../api/api'
     export default {
         name: 'basetable',
         data() {
@@ -135,9 +136,8 @@
                 // }).then((res) => {
                 //     this.tableData = res.data.list;
                 // })
-                this.$api.fetchPost('/v1/data', null).then((respone) => {
+                getData(null).then((respone) => {
                     if (respone.data.status == 200) {
-                        console.log(respone.data)
                         this.tableData = respone.data.data;
                     } else {
                         alert(respone.data.message);

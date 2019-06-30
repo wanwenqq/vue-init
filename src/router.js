@@ -72,8 +72,7 @@ router.beforeEach((to, from, next) => {
   // to and from are both route objects. must call `next`.
   // const token = localStorage.getItem('token')
   // localStorage.removeItem('phone');
-  console.log('999999999999999999');
-  const token = localStorage.getItem('phone')
+  const token = localStorage.getItem('phone');
   if (!token && to.path !== '/login') {
     next('/login')
   } else {

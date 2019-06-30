@@ -3,7 +3,12 @@ import qs from 'qs'
 
 axios.defaults.timeout = 5000;                        //响应时间
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';        //配置请求头
-axios.defaults.baseURL = 'http://127.0.0.1:5000';   //配置接口地址
+// 环境的切换
+if (process.env.NODE_ENV === 'development') {
+    axios.defaults.baseURL = 'http://127.0.0.1:5000/'
+  } else if (process.env.NODE_ENV === 'production') {
+    axios.defaults.baseURL = 'http://www.xxx.com'
+  }
 
 //POST传参序列化(添加请求拦截器)
 axios.interceptors.request.use((config) => {
@@ -30,7 +35,7 @@ axios.interceptors.response.use((res) =>{
 });
 
 //返回一个Promise(发送post请求)
-export function fetchPost(url, params) {
+export function post(url, params) {
     return new Promise((resolve, reject) => {
         axios.post(url, params)
             .then(response => {
@@ -44,7 +49,7 @@ export function fetchPost(url, params) {
     })
 }
 ////返回一个Promise(发送get请求)
-export function fetchGet(url, param) {
+export function get(url, param) {
     return new Promise((resolve, reject) => {
         axios.get(url, {params: param})
             .then(response => {
@@ -58,6 +63,6 @@ export function fetchGet(url, param) {
     })
 }
 export default {
-    fetchPost,
-    fetchGet,
+    post,
+    get,
 }
