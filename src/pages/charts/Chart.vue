@@ -23,9 +23,9 @@
 
         },
         mounted() {
+            this.init();
             this.draw_bar();
             this.draw_graph();
-            this.init();
 
         },
         computed: {
